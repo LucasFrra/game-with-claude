@@ -3,6 +3,8 @@
 #include "Bosses/EldoriaDeityBase.h"
 #include "Environment/EldoriaCollapsibleStructure.h"
 #include "Components/EldoriaVitalsComponent.h"
+#include "Effects/EldoriaJuiceSubsystem.h"
+#include "Effects/EldoriaCameraShakes.h"
 #include "Physics/EldoriaPhysicsObject.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -531,6 +533,17 @@ void AEldoriaDeityBase::UpdateCharge(float DeltaSeconds)
 
 	if (bStopped)
 	{
+		if (UEldoriaJuiceSubsystem* Juice = UEldoriaJuiceSubsystem::Get(this))
+		{
+			const FVector ImpactPoint = GetActorTransform().TransformPosition(FVector(GetChargeFrontOffset().X, 0.f, 0.f));
+			Juice->Shake(UEldoriaShakeImpact::StaticClass(), ImpactPoint, 3000.f, 10000.f, bBroughtDown ? 1.4f : 1.f);
+			Juice->RumbleAt(ImpactPoint, 2000.f, 7000.f, 1.f, 0.6f);
+			Juice->Dust(ImpactPoint, bBroughtDown ? 4.f : 3.f, 12);
+			if (bBroughtDown)
+			{
+				Juice->SlowMotion(1.f, 0.35f);
+			}
+		}
 		// Bringing a whole tower down knocks the deity to its knees for a long time
 		if (bBroughtDown)
 		{

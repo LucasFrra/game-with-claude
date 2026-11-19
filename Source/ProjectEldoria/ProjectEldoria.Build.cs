@@ -21,7 +21,7 @@ public class ProjectEldoria : ModuleRules
 			"Slate"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "PhysicsCore" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "PhysicsCore", "EngineCameras" });
 
 		PublicIncludePaths.AddRange(new string[] {
 			"ProjectEldoria",

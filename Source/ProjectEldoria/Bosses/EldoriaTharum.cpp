@@ -10,6 +10,8 @@
 #include "Engine/World.h"
 #include "Materials/MaterialInterface.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Effects/EldoriaJuiceSubsystem.h"
+#include "Effects/EldoriaCameraShakes.h"
 
 namespace
 {
@@ -257,6 +259,20 @@ void AEldoriaTharum::BeginPlay()
 	}
 }
 
+void AEldoriaTharum::OnFootfall(int32 Leg, float Weight)
+{
+	UEldoriaJuiceSubsystem* Juice = UEldoriaJuiceSubsystem::Get(this);
+	if (!Juice || !FootMeshes.IsValidIndex(Leg))
+	{
+		return;
+	}
+	const FVector Foot = FootMeshes[Leg]->GetComponentLocation();
+	const float W = FMath::Clamp(Weight, 0.4f, 1.6f);
+	Juice->Shake(UEldoriaShakeFootstep::StaticClass(), Foot, 1800.f, 7500.f, W);
+	Juice->RumbleAt(Foot, 1500.f, 5500.f, 0.3f * W, 0.15f);
+	Juice->Dust(Foot - FVector(0.f, 0.f, 30.f), 1.4f * W, 5);
+}
+
 void AEldoriaTharum::UpdateBodyAnimation(float DeltaSeconds)
 {
 	Clock += DeltaSeconds;
@@ -346,6 +362,13 @@ void AEldoriaTharum::UpdateBodyAnimation(float DeltaSeconds)
 	for (int32 Index = 0; Index < LegPivots.Num(); ++Index)
 	{
 		float Pitch = Swing * FMath::Sin(GaitPhase + LegPhaseOffsets[Index]);
+		// the foot is planted when the leg reaches the front of its swing and starts pushing back
+		const float LegCos = FMath::Cos(GaitPhase + LegPhaseOffsets[Index]);
+		if (Moving > 0.15f && PrevLegCos[Index] > 0.f && LegCos <= 0.f && Index < 4)
+		{
+			OnFootfall(Index, Moving);
+		}
+		PrevLegCos[Index % 4] = LegCos;
 		if (Index < 2)
 		{
 			Pitch += FrontKneel;
