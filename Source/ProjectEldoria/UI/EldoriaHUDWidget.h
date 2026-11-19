@@ -8,6 +8,9 @@
 
 class UTextBlock;
 class UProgressBar;
+class UWidget;
+class UFont;
+struct FSlateFontInfo;
 
 /**
  * Minimal gameplay HUD: contextual interaction prompt + transient message line.
@@ -47,13 +50,23 @@ protected:
 
 	/** Key hint displayed before the prompt verb. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="HUD")
-	FText InteractKeyHint = NSLOCTEXT("EldoriaHUD", "InteractKey", "[E]");
+	FText InteractKeyHint = NSLOCTEXT("EldoriaHUD", "InteractKey", "E");
 
 	UPROPERTY(BlueprintReadOnly, Category="HUD", meta=(BindWidgetOptional))
 	TObjectPtr<UTextBlock> PromptText;
 
 	UPROPERTY(BlueprintReadOnly, Category="HUD", meta=(BindWidgetOptional))
 	TObjectPtr<UTextBlock> MessageText;
+
+	/** Optional containers shown/hidden with their text (key chip + verb, dialogue box). */
+	UPROPERTY(BlueprintReadOnly, Category="HUD", meta=(BindWidgetOptional))
+	TObjectPtr<UWidget> PromptPanel;
+
+	UPROPERTY(BlueprintReadOnly, Category="HUD", meta=(BindWidgetOptional))
+	TObjectPtr<UTextBlock> PromptKeyText;
+
+	UPROPERTY(BlueprintReadOnly, Category="HUD", meta=(BindWidgetOptional))
+	TObjectPtr<UWidget> MessagePanel;
 
 	UPROPERTY(BlueprintReadOnly, Category="HUD", meta=(BindWidgetOptional))
 	TObjectPtr<UTextBlock> BossNameText;
@@ -73,6 +86,12 @@ protected:
 private:
 
 	void BuildDefaultLayout();
+
+	/** Fonts of the art direction (docs/ART_DIRECTION.md): built at runtime from the imported font faces. */
+	FSlateFontInfo MakeFont(const TCHAR* FaceName, float Size, int32 LetterSpacing = 0);
+
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<UFont>> RuntimeFonts;
 	void HideMessage();
 	void HideBanner();
 
