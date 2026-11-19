@@ -4,6 +4,7 @@
 #include "ProjectEldoria.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/CollisionProfile.h"
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 
@@ -46,6 +47,9 @@ void AEldoriaCollapsibleStructure::ReleaseAsDebris(UPrimitiveComponent* Piece, c
 	Piece->SetMassOverrideInKg(NAME_None, DebrisMassKg, true);
 	// The deity is kinematic and moves by teleporting steps: never let it fling debris across the map
 	Piece->BodyInstance.SetMaxDepenetrationVelocity(400.f);
+	// Heavy stone, not confetti: damped so debris tumbles a little and settles
+	Piece->SetLinearDamping(0.25f);
+	Piece->SetAngularDamping(0.9f);
 
 	const FVector Spread = FMath::VRandCone(Direction, FMath::DegreesToRadians(35.f));
 	Piece->AddImpulse((Spread + FVector(0.f, 0.f, 0.4f)).GetSafeNormal() * DebrisVelocity, NAME_None, true);
@@ -133,9 +137,31 @@ void AEldoriaCollapsibleStructure::Collapse(FVector Direction, AActor* Instigato
 	Main->OnComponentHit.AddDynamic(this, &AEldoriaCollapsibleStructure::HandleBodyHit);
 	Main->WakeRigidBody();
 
-	// Kick the top: friction holds the base, so the structure pivots and falls under its own weight
 	const FVector Top(Box.GetCenter().X, Box.GetCenter().Y, Box.Max.Z);
-	Main->AddImpulseAtLocation(FallDirection * TopKickSpeed * StructureMassKg, Top);
+	if (bHingeAtBase)
+	{
+		// Hinge on the foot, on the fall side: it can only rotate around it (no slide, no lift-off)
+		const FVector Half = Box.GetExtent();
+		const float FootReach = FMath::Abs(FallDirection.X) * Half.X + FMath::Abs(FallDirection.Y) * Half.Y;
+		const FVector Pivot = FVector(Box.GetCenter().X, Box.GetCenter().Y, Box.Min.Z) + FallDirection * FMath::Min(FootReach, 150.f);
+		UPhysicsConstraintComponent* Hinge = NewObject<UPhysicsConstraintComponent>(this, TEXT("CollapseHinge"));
+		Hinge->SetWorldLocation(Pivot);
+		Hinge->RegisterComponent();
+		Hinge->SetLinearXLimit(LCM_Locked, 0.f);
+		Hinge->SetLinearYLimit(LCM_Locked, 0.f);
+		Hinge->SetLinearZLimit(LCM_Locked, 0.f);
+		Hinge->SetAngularSwing1Limit(ACM_Limited, 100.f);
+		Hinge->SetAngularSwing2Limit(ACM_Limited, 100.f);
+		Hinge->SetAngularTwistLimit(ACM_Locked, 0.f);
+		Hinge->SetConstrainedComponents(Main, NAME_None, nullptr, NAME_None);
+		Main->SetAngularDamping(0.15f);
+		Main->AddImpulseAtLocation(FallDirection * HingeKickSpeed * StructureMassKg, Top);
+	}
+	else
+	{
+		// Kick the top: friction holds the base, so the structure pivots and falls under its own weight
+		Main->AddImpulseAtLocation(FallDirection * TopKickSpeed * StructureMassKg, Top);
+	}
 
 	GetWorld()->GetTimerManager().SetTimer(SettleTimer, this, &AEldoriaCollapsibleStructure::CheckSettled, 0.5f, true, 1.f);
 	OnCollapsed.Broadcast(this);
