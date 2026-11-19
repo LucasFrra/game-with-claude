@@ -105,6 +105,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Collapse|Topple", meta=(ClampMin=0, Units="CentimetersPerSecond"))
 	float TopKickSpeed = 250.f;
 
+	/** Pivot around the foot of the structure on the fall side (a hinge to the ground) instead of sliding or flying:
+	 *  it starts slowly, then accelerates under its own weight, like a real falling tree. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Collapse")
+	bool bHingeAtBase = true;
+
+	/** Initial push at the top when hinged (cm/s): just enough to pass the balance point. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Collapse", meta=(EditCondition="bHingeAtBase", Units="CentimetersPerSecond"))
+	float HingeKickSpeed = 140.f;
+
 	/** Freeze the fallen structure once it rests, so it becomes stable ground (a ramp, a bridge...). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Collapse|Topple")
 	bool bFreezeWhenSettled = true;

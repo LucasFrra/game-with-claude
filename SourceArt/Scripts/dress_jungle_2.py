@@ -141,6 +141,12 @@ def foliage_type(name):
     grass = name.startswith("Grass")
     ft.set_editor_property("cull_distance", unreal.Int32Interval(min=0, max=4500 if grass else 9000 if small else 0))
     ft.set_editor_property("cast_shadow", not name.startswith(("Grass", "Clover", "Pebble")))
+    # Forest trees are solid at the trunk (capsule in the mesh); everything else stays passable
+    bi = ft.get_editor_property("body_instance")
+    solid = veg_mesh(name)[0].get_name().startswith("SM_Tree_")
+    bi.set_editor_property("collision_profile_name", "BlockAll" if solid else "NoCollision")
+    ft.set_editor_property("body_instance", bi)
+    ft.set_editor_property("collision_with_world", False)
     L.EAL.save_loaded_asset(ft)
     return ft
 
@@ -173,7 +179,10 @@ def hero_trees(data):
     cyl = unreal.load_asset("/Engine/BasicShapes/Cylinder")
     for k, t in enumerate(data["trees_hero"]):
         mesh, factor, _ = veg_mesh(t["mesh"])
-        L.spawn_mesh(mesh, "HeroTree_%02d" % k, (t["x"] * 100, t["y"] * 100, t["z"] * 100), t["yaw"], t["scale"] * factor * 1.15, "Jungle/Trees/Hero", collision=False)
+        stylized = mesh.get_name().startswith("SM_Tree_")
+        L.spawn_mesh(mesh, "HeroTree_%02d" % k, (t["x"] * 100, t["y"] * 100, t["z"] * 100), t["yaw"], t["scale"] * factor * 1.15, "Jungle/Trees/Hero", collision=stylized)
+        if stylized:
+            continue        # the stylized trunk carries its own capsule
         r, h = t["collider"]["radius"], t["collider"]["height"]
         trunk = {"SM_Tree_Broadleaf_A": 0.95, "SM_Tree_Broadleaf_B": 0.55}.get(mesh.get_name())
         if trunk:   # match the stylized trunk (radius at chest height, mesh units are metres)

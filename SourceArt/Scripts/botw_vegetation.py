@@ -86,6 +86,27 @@ def run():
         L.EAL.save_loaded_asset(mesh)
     log.append("materials assigned")
 
+    # Trunk-only collision: the crown stays soft/passable, the trunk is solid (mesh units: cm)
+    trunks = {"SM_Tree_Broadleaf_A": (100.0, 620.0, 330.0), "SM_Tree_Broadleaf_B": (62.0, 380.0, 210.0)}
+    for name, (radius, length, z) in trunks.items():
+        mesh = veg.get(name)
+        if not mesh:
+            continue
+        body = mesh.get_editor_property("body_setup")
+        geom = body.get_editor_property("agg_geom")
+        cap = unreal.KSphylElem()
+        cap.set_editor_property("center", unreal.Vector(0, 0, z))
+        cap.set_editor_property("radius", radius)
+        cap.set_editor_property("length", length)
+        for k in ("box_elems", "sphere_elems", "convex_elems"):
+            geom.set_editor_property(k, [])
+        geom.set_editor_property("sphyl_elems", [cap])
+        body.set_editor_property("agg_geom", geom)
+        body.set_editor_property("collision_trace_flag", unreal.CollisionTraceFlag.CTF_USE_SIMPLE_AS_COMPLEX)
+        mesh.set_editor_property("body_setup", body)
+        L.EAL.save_loaded_asset(mesh)
+    log.append("trunk capsules")
+
     # Distant peaks: far beyond the cliffs, tall enough to show above them; fog turns them blue
     L.destroy(["Backdrop_Peak_"])
     spots = [("SM_Peak_1", 2600, 1500, 0), ("SM_Peak_0", 2000, -2300, 40), ("SM_Peak_3", 3200, -500, 120),
