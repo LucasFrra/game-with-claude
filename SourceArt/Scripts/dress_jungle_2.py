@@ -230,7 +230,7 @@ def run():
     with open(os.path.join(TERRAIN_DIR, "scatter.json")) as f:
         data = json.load(f)
     terrain()
-    lighting()
+    # lighting, fog and grading now live in art_direction.py (run it after this script)
     young_tree_mesh()
     vegetation_collision()
     foliage(data)

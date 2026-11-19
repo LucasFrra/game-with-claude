@@ -21,5 +21,10 @@ ZQSD / WASD déplacement · Maj sprint · Espace saut · E interagir (maintenir 
 - `SourceArt/Scripts` — scripts Python (éditeur Unreal et Blender) qui génèrent le terrain, la végétation, les matériaux et les modèles de Tharum.
 - `SourceArt/Generated` — sorties générées (terrain, modèles Blender en glTF).
 
+## Direction artistique
+Voir `docs/ART_DIRECTION.md` (rendu cel-shading, palette, typographie) et `docs/ROADMAP.md` (jalons).
+
 ## Crédits art
 Packs CC0 de [Quaternius](https://quaternius.com) (Stylized Nature MegaKit, Medieval Village, Fantasy Props). Seuls les assets utilisés sont versionnés ; les archives d'origine (`SourceArt/Downloads`) ne le sont pas.
+
+Polices sous licence SIL Open Font License : Marcellus SC (Brian J. Bonislawsky) et Alegreya Sans (Juan Pablo del Peral, Huerta Tipográfica), via Google Fonts — licences dans `SourceArt/Fonts`.
