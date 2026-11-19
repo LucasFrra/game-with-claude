@@ -174,6 +174,41 @@ def param_vector(mat, name, rgb, x, y):
     return e
 
 
+PUSH_HLSL = r"""
+float3 d = WP - P.xyz;
+float h = d.z;
+d.z = 0;
+float dist = length(d);
+float k = saturate(1.0 - dist / 110.0) * saturate(1.0 - abs(h) / 220.0) * W;
+float3 dir = dist > 1.0 ? d / dist : float3(0, 0, 0);
+return dir * k * 45.0 + float3(0, 0, -k * 22.0);
+"""
+
+
+def player_push(mat, vc, x, y):
+    """Grass and bushes bend away from the player (MPC_Eldoria.PlayerPosition, set by the character)."""
+    mpc_path = "/Game/Project/Materials/MPC_Eldoria"
+    custom = expr(mat, unreal.MaterialExpressionCustom, x + 300, y)
+    custom.set_editor_property("code", PUSH_HLSL)
+    custom.set_editor_property("output_type", unreal.CustomMaterialOutputType.CMOT_FLOAT3)
+    ins = []
+    for n in ("WP", "P", "W"):
+        ci = unreal.CustomInput()
+        ci.set_editor_property("input_name", n)
+        ins.append(ci)
+    custom.set_editor_property("inputs", ins)
+    MEL.connect_material_expressions(expr(mat, unreal.MaterialExpressionWorldPosition, x, y - 80), "", custom, "WP")
+    if EAL.does_asset_exist(mpc_path):
+        cp = expr(mat, unreal.MaterialExpressionCollectionParameter, x, y)
+        cp.set_editor_property("collection", unreal.load_asset(mpc_path))
+        cp.set_editor_property("parameter_name", "PlayerPosition")
+        MEL.connect_material_expressions(cp, "", custom, "P")
+    else:
+        MEL.connect_material_expressions(const3(mat, (0, 0, -100000), x, y), "", custom, "P")
+    MEL.connect_material_expressions(vc, "R", custom, "W")
+    return custom
+
+
 def build_foliage_material():
     """Masked two-sided foliage: texture * tint, root->tip gradient from vertex color, wind on vertex color,
     world-space normals bendable towards up (grass lit like the ground)."""
@@ -236,7 +271,7 @@ def build_foliage_material():
         MEL.connect_material_expressions(param_scalar(mat, "WindWeight", 1.0, -750, 700), "", weight, "B")
         MEL.connect_material_expressions(weight, "", wind, "WindWeight")
         MEL.connect_material_expressions(param_scalar(mat, "WindSpeed", 0.35, -700, 760), "", wind, "WindSpeed")
-        MEL.connect_material_expressions(const3(mat, (0, 0, 0), -700, 820), "", wind, "AdditionalWPO")
+        MEL.connect_material_expressions(player_push(mat, vc, -900, 900), "", wind, "AdditionalWPO")
         MEL.connect_material_property(wind, "", unreal.MaterialProperty.MP_WORLD_POSITION_OFFSET)
     return finish(mat)
 

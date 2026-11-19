@@ -1,6 +1,7 @@
 // Project Eldoria
 
 #include "Bosses/EldoriaEncounterManager.h"
+#include "Characters/EldoriaCharacter.h"
 #include "Bosses/EldoriaControlDevice.h"
 #include "Bosses/EldoriaDeityBase.h"
 #include "Bosses/EldoriaTharum.h"
@@ -84,6 +85,12 @@ void AEldoriaEncounterManager::Poll()
 	{
 		bArenaAnnounced = true;
 		UEldoriaMessageSubsystem::ShowMessage(this, ArenaText, 6.f);
+		// first sight of the deity: the camera turns to it, its name is carved on screen
+		if (AEldoriaCharacter* Hero = Cast<AEldoriaCharacter>(UGameplayStatics::GetPlayerPawn(this, 0)))
+		{
+			Hero->FocusOn(Deity, 2.8f);
+		}
+		HUD->ShowBanner(BossName, LOCTEXT("Epithet", "Divinité de la Jungle"), 3.5f);
 	}
 	if (bInArena || bPlayerInArena)
 	{
@@ -120,6 +127,10 @@ void AEldoriaEncounterManager::HandleDeviceDisabled(AEldoriaControlDevice* InDev
 	if (Deity)
 	{
 		Deity->Liberate();
+		if (AEldoriaCharacter* Hero = Cast<AEldoriaCharacter>(UGameplayStatics::GetPlayerPawn(this, 0)))
+		{
+			Hero->FocusOn(Deity, 3.5f);
+		}
 	}
 	UEldoriaMessageSubsystem::ShowMessage(this, LiberationText, 6.f);
 

@@ -111,6 +111,9 @@ private:
 	TObjectPtr<AEldoriaControlDevice> ControlDevice;
 
 	float GaitPhase = 0.f;
+	float PrevLegCos[4] = { 0.f, 0.f, 0.f, 0.f };
+	/** A foot hits the ground: the earth shakes. */
+	void OnFootfall(int32 Leg, float Weight);
 	float Clock = 0.f;
 	float BodyZ = 0.f;
 	float BodyPitch = 0.f;

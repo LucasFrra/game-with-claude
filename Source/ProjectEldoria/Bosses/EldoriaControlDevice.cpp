@@ -4,6 +4,8 @@
 #include "Bosses/EldoriaDeityBase.h"
 #include "Interactions/EldoriaInteractableComponent.h"
 #include "UI/EldoriaMessageSubsystem.h"
+#include "Effects/EldoriaJuiceSubsystem.h"
+#include "Effects/EldoriaCameraShakes.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Materials/MaterialInterface.h"
@@ -181,6 +183,13 @@ void AEldoriaControlDevice::ReleaseLock(int32 Index, AActor* InstigatorActor)
 	++LocksReleased;
 	RingSpeed *= 0.55f;
 	OnLockReleased.Broadcast(this, LocksReleased, Locks.Num());
+	if (UEldoriaJuiceSubsystem* Juice = UEldoriaJuiceSubsystem::Get(this))
+	{
+		// the lock tears off: a beat of hit-stop, the beast flinches
+		Juice->HitStop(0.1f, 0.03f);
+		Juice->Shake(UEldoriaShakeImpact::StaticClass(), GetActorLocation(), 1500.f, 6000.f, 0.6f);
+		Juice->Rumble(0.8f, 0.3f);
+	}
 
 	// The deity feels it and staggers: a window to keep going
 	if (AEldoriaDeityBase* Deity = Cast<AEldoriaDeityBase>(GetAttachParentActor()))
@@ -214,6 +223,14 @@ void AEldoriaControlDevice::ShutDown(AActor* InstigatorActor)
 	}
 
 	OnDeviceDisabled.Broadcast(this);
+	if (UEldoriaJuiceSubsystem* Juice = UEldoriaJuiceSubsystem::Get(this))
+	{
+		// the moment of liberation lasts
+		Juice->HitStop(0.15f, 0.02f);
+		Juice->SlowMotion(2.2f, 0.3f);
+		Juice->Shake(UEldoriaShakeImpact::StaticClass(), GetActorLocation(), 2000.f, 8000.f, 0.8f);
+		Juice->Rumble(1.f, 0.5f);
+	}
 
 	// The dead mechanism slides off the deity's back
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);

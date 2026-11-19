@@ -14,6 +14,7 @@ class UEldoriaVitalsComponent;
 class UEldoriaClimbComponent;
 class UInputAction;
 class UAnimSequenceBase;
+class UMaterialParameterCollection;
 
 /**
  * Eldoria protagonist.
@@ -53,6 +54,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Respawn")
 	void Respawn();
+
+	/** Turns the camera towards Target for Seconds (boss intro, liberation...). */
+	UFUNCTION(BlueprintCallable, Category="Camera")
+	void FocusOn(AActor* Target, float Seconds);
 
 	/** Debug / tests: feeds the move input (X right, Y forward) every frame for Seconds. */
 	void HoldTestInput(const FVector2D& Input, float Seconds) { TestInput = Input; TestInputTime = Seconds; }
@@ -131,6 +136,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation") TObjectPtr<UAnimSequenceBase> HitReactAnim;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation") TObjectPtr<UAnimSequenceBase> ThrowAnim;
 
+	/** Hold to lock the camera onto the nearest deity (Z-targeting). */
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> LockOnAction;
+
+	/** Shared material parameters (player position for grass that bends away). */
+	UPROPERTY(EditAnywhere, Category="Rendering")
+	TObjectPtr<UMaterialParameterCollection> WorldParameters;
+
 	/** Grace period to jump after walking off a ledge. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Movement", meta=(Units="s"))
 	float CoyoteTime = 0.15f;
@@ -175,6 +188,16 @@ private:
 	void HandleDamaged(int32 Quarters);
 
 	UPROPERTY(Transient) TObjectPtr<UAnimSequenceBase> CurrentStateAnim;
+	void UpdateCameraFeel(float DeltaSeconds);
+	void OnLockOnStarted();
+	void OnLockOnStopped();
+	bool bLockOnHeld = false;
+	TWeakObjectPtr<AActor> FocusTarget;
+	float FocusTime = 0.f;
+	float EffortTimer = 0.f;
+	float HurtFlash = 0.f;
+	float BaseArmLength = 450.f;
+	float BaseFOV = 90.f;
 	float OneShotTime = 0.f;
 	FVector2D TestInput = FVector2D::ZeroVector;
 	float TestInputTime = 0.f;
