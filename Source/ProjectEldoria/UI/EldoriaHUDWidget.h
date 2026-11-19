@@ -9,6 +9,10 @@
 class UTextBlock;
 class UProgressBar;
 class UWidget;
+class UImage;
+class UHorizontalBox;
+class UTexture2D;
+class UMaterialInstanceDynamic;
 class UFont;
 struct FSlateFontInfo;
 
@@ -42,11 +46,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category="HUD")
 	void ShowBanner(const FText& Title, const FText& Subtitle, float Duration);
 
+	/** Hearts, top left (quarters like Zelda). */
+	UFUNCTION(BlueprintCallable, Category="HUD")
+	void SetHealth(int32 Quarters, int32 MaxQuarters);
+
+	/** Stamina ring next to the character; fades out once full. */
+	UFUNCTION(BlueprintCallable, Category="HUD")
+	void SetStamina(float Stamina, bool bExhausted);
+
 protected:
 
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	/** Key hint displayed before the prompt verb. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="HUD")
@@ -92,6 +105,17 @@ private:
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UFont>> RuntimeFonts;
+
+	UPROPERTY(Transient) TObjectPtr<UHorizontalBox> HeartsBox;
+	UPROPERTY(Transient) TArray<TObjectPtr<UImage>> HeartImages;
+	UPROPERTY(Transient) TArray<TObjectPtr<UTexture2D>> HeartTextures;
+	UPROPERTY(Transient) TObjectPtr<UImage> StaminaRing;
+	UPROPERTY(Transient) TObjectPtr<UMaterialInstanceDynamic> StaminaMID;
+	float StaminaValue = 1.f;
+	float StaminaOpacity = 0.f;
+	float StaminaFullFor = 10.f;
+	float DamageFlash = 0.f;
+	int32 LastQuarters = -1;
 	void HideMessage();
 	void HideBanner();
 

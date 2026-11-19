@@ -46,6 +46,18 @@ public:
 	UFUNCTION(Exec)
 	void EldoriaUseAbility();
 
+	/** Debug: hurts the character (quarter hearts). */
+	UFUNCTION(Exec)
+	void EldoriaDamage(int32 Quarters);
+
+	/** Debug: holds the move stick (X right, Y forward) for Seconds, as if the player did. */
+	UFUNCTION(Exec)
+	void EldoriaHoldMove(float X, float Y, float Seconds);
+
+	/** Debug: presses jump once. */
+	UFUNCTION(Exec)
+	void EldoriaJump();
+
 	/** Debug: knocks every deity to its knees (heavy stun, as after ramming the tower down). */
 	UFUNCTION(Exec)
 	void EldoriaHeavyStun();
@@ -71,6 +83,12 @@ private:
 
 	UFUNCTION()
 	void HandleInteractionFocusChanged(UObject* FocusedTarget, const FText& Prompt);
+
+	UFUNCTION()
+	void HandleHealthChanged(int32 Quarters, int32 MaxQuarters);
+
+	UFUNCTION()
+	void HandleStaminaChanged(float Stamina, bool bExhausted);
 
 	UPROPERTY()
 	TObjectPtr<UEldoriaHUDWidget> HUDWidget;

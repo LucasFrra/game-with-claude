@@ -157,6 +157,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Deity|Charge", meta=(Units="cm", ClampMin=0))
 	float MinWallHeight = 250.f;
 
+	/** Damage of a charge that hits the player, in quarter hearts. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Deity|Charge", meta=(ClampMin=0))
+	int32 ChargeDamageQuarters = 6;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Deity|Perception")
 	FVector TerritoryCenter = FVector::ZeroVector;
 
