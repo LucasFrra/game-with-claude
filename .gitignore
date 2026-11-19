@@ -1,0 +1,23 @@
+# Unreal generated
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+.vs/
+.idea/
+*.sln
+*.slnx
+*.suo
+*.VC.db
+*.opensdf
+*.sdf
+
+# Local tooling
+.claude/
+.mcp.json
+
+# Original downloaded art packs (CC0, re-downloadable; see SourceArt/README.md)
+SourceArt/Downloads/
+__pycache__/
+*.pyc
