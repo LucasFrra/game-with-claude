@@ -1,0 +1,626 @@
+{
+ "pieces": {
+  "Blk_800x800x600": {
+   "shape": "Cube",
+   "dims": [
+    8.0,
+    8.0,
+    6.0
+   ],
+   "style": "stone"
+  },
+  "Blk_250x250x180": {
+   "shape": "Cube",
+   "dims": [
+    2.5,
+    2.5,
+    1.8
+   ],
+   "style": "stone"
+  },
+  "Blk_200x220x120": {
+   "shape": "Cube",
+   "dims": [
+    2.0,
+    2.2,
+    1.2
+   ],
+   "style": "stone"
+  },
+  "Blk_700x700x500": {
+   "shape": "Cube",
+   "dims": [
+    7.0,
+    7.0,
+    5.0
+   ],
+   "style": "stone"
+  },
+  "Blk_600x600x400": {
+   "shape": "Cube",
+   "dims": [
+    6.0,
+    6.0,
+    4.0
+   ],
+   "style": "stone"
+  },
+  "Blk_600x640x020_W": {
+   "shape": "Cube",
+   "dims": [
+    6.0,
+    6.4,
+    0.2
+   ],
+   "style": "wood"
+  },
+  "Blk_035x035x350_W": {
+   "shape": "Cube",
+   "dims": [
+    0.35,
+    0.35,
+    3.5
+   ],
+   "style": "wood"
+  },
+  "Blk_015x640x015_W": {
+   "shape": "Cube",
+   "dims": [
+    0.15,
+    6.4,
+    0.15
+   ],
+   "style": "wood"
+  },
+  "Blk_870x200x020_W": {
+   "shape": "Cube",
+   "dims": [
+    8.7,
+    2.0,
+    0.2
+   ],
+   "style": "wood"
+  },
+  "Blk_300x1000x300": {
+   "shape": "Cube",
+   "dims": [
+    3.0,
+    10.0,
+    3.0
+   ],
+   "style": "stone"
+  },
+  "Blk_1600x600x1600": {
+   "shape": "Cube",
+   "dims": [
+    16.0,
+    6.0,
+    16.0
+   ],
+   "style": "stone"
+  },
+  "Blk_040x2200x070": {
+   "shape": "Cube",
+   "dims": [
+    0.4,
+    22.0,
+    0.7
+   ],
+   "style": "stone"
+  },
+  "Blk_400x300x1100": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    3.0,
+    11.0
+   ],
+   "style": "stone"
+  },
+  "Col_160x160x450": {
+   "shape": "Cylinder",
+   "dims": [
+    1.6,
+    1.6,
+    4.5
+   ],
+   "style": "stone"
+  },
+  "Blk_400x300x380": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    3.0,
+    3.8
+   ],
+   "style": "stone"
+  },
+  "Blk_250x250x950": {
+   "shape": "Cube",
+   "dims": [
+    2.5,
+    2.5,
+    9.5
+   ],
+   "style": "stone"
+  },
+  "Blk_080x140x140": {
+   "shape": "Cube",
+   "dims": [
+    0.8,
+    1.4,
+    1.4
+   ],
+   "style": "stone"
+  },
+  "Col_160x160x300": {
+   "shape": "Cylinder",
+   "dims": [
+    1.6,
+    1.6,
+    3.0
+   ],
+   "style": "stone"
+  },
+  "Col_160x160x900": {
+   "shape": "Cylinder",
+   "dims": [
+    1.6,
+    1.6,
+    9.0
+   ],
+   "style": "stone"
+  },
+  "Col_070x070x500_W": {
+   "shape": "Cylinder",
+   "dims": [
+    0.7,
+    0.7,
+    5.0
+   ],
+   "style": "wood"
+  },
+  "Col_160x160x650": {
+   "shape": "Cylinder",
+   "dims": [
+    1.6,
+    1.6,
+    6.5
+   ],
+   "style": "stone"
+  },
+  "Blk_150x150x120": {
+   "shape": "Cube",
+   "dims": [
+    1.5,
+    1.5,
+    1.2
+   ],
+   "style": "stone"
+  },
+  "Blk_040x1000x070": {
+   "shape": "Cube",
+   "dims": [
+    0.4,
+    10.0,
+    0.7
+   ],
+   "style": "stone"
+  },
+  "Col_160x160x200": {
+   "shape": "Cylinder",
+   "dims": [
+    1.6,
+    1.6,
+    2.0
+   ],
+   "style": "stone"
+  },
+  "Blk_030x030x300_W": {
+   "shape": "Cube",
+   "dims": [
+    0.3,
+    0.3,
+    3.0
+   ],
+   "style": "wood"
+  },
+  "Blk_600x600x015_W": {
+   "shape": "Cube",
+   "dims": [
+    6.0,
+    6.0,
+    0.15
+   ],
+   "style": "wood"
+  },
+  "Blk_500x020x200_W": {
+   "shape": "Cube",
+   "dims": [
+    5.0,
+    0.2,
+    2.0
+   ],
+   "style": "wood"
+  },
+  "Blk_020x500x240_W": {
+   "shape": "Cube",
+   "dims": [
+    0.2,
+    5.0,
+    2.4
+   ],
+   "style": "wood"
+  },
+  "Blk_400x300x980": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    3.0,
+    9.8
+   ],
+   "style": "stone"
+  },
+  "Blk_600x600x060": {
+   "shape": "Cube",
+   "dims": [
+    6.0,
+    6.0,
+    0.6
+   ],
+   "style": "stone"
+  },
+  "Blk_400x300x500": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    3.0,
+    5.0
+   ],
+   "style": "stone"
+  },
+  "Blk_050x160x240": {
+   "shape": "Cube",
+   "dims": [
+    0.5,
+    1.6,
+    2.4
+   ],
+   "style": "stone"
+  },
+  "Col_160x160x750": {
+   "shape": "Cylinder",
+   "dims": [
+    1.6,
+    1.6,
+    7.5
+   ],
+   "style": "stone"
+  },
+  "Blk_500x120x100": {
+   "shape": "Cube",
+   "dims": [
+    5.0,
+    1.2,
+    1.0
+   ],
+   "style": "stone"
+  },
+  "Blk_400x300x620": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    3.0,
+    6.2
+   ],
+   "style": "stone"
+  },
+  "Blk_400x300x860": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    3.0,
+    8.6
+   ],
+   "style": "stone"
+  },
+  "Blk_400x400x260": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    4.0,
+    2.6
+   ],
+   "style": "stone"
+  },
+  "Blk_400x300x740": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    3.0,
+    7.4
+   ],
+   "style": "stone"
+  },
+  "Blk_400x3800x150": {
+   "shape": "Cube",
+   "dims": [
+    4.0,
+    38.0,
+    1.5
+   ],
+   "style": "stone"
+  },
+  "Blk_300x250x160": {
+   "shape": "Cube",
+   "dims": [
+    3.0,
+    2.5,
+    1.6
+   ],
+   "style": "stone"
+  }
+ },
+ "items": [
+  {
+   "actor": "Collapsible_RuinTower",
+   "component": "Tower_Base",
+   "key": "Blk_800x800x600"
+  },
+  {
+   "actor": "Collapsible_RuinTower",
+   "component": "Tower_Crown_A",
+   "key": "Blk_250x250x180"
+  },
+  {
+   "actor": "Collapsible_RuinTower",
+   "component": "Tower_Crown_B",
+   "key": "Blk_200x220x120"
+  },
+  {
+   "actor": "Collapsible_RuinTower",
+   "component": "Tower_Mid",
+   "key": "Blk_700x700x500"
+  },
+  {
+   "actor": "Collapsible_RuinTower",
+   "component": "Tower_Upper",
+   "key": "Blk_600x600x400"
+  },
+  {
+   "actor": "Collapsible_Scaffold",
+   "component": "Scaffold_Deck",
+   "key": "Blk_600x640x020_W"
+  },
+  {
+   "actor": "Collapsible_Scaffold",
+   "component": "Scaffold_Post_0",
+   "key": "Blk_035x035x350_W"
+  },
+  {
+   "actor": "Collapsible_Scaffold",
+   "component": "Scaffold_Post_1",
+   "key": "Blk_035x035x350_W"
+  },
+  {
+   "actor": "Collapsible_Scaffold",
+   "component": "Scaffold_Post_2",
+   "key": "Blk_035x035x350_W"
+  },
+  {
+   "actor": "Collapsible_Scaffold",
+   "component": "Scaffold_Post_3",
+   "key": "Blk_035x035x350_W"
+  },
+  {
+   "actor": "Collapsible_Scaffold",
+   "component": "Scaffold_Rail",
+   "key": "Blk_015x640x015_W"
+  },
+  {
+   "actor": "Collapsible_Scaffold",
+   "component": "Scaffold_Ramp",
+   "key": "Blk_870x200x020_W"
+  },
+  {
+   "actor": "Tower_Wall_Stub",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_300x1000x300"
+  },
+  {
+   "actor": "Tunnel_Arch",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_1600x600x1600"
+  },
+  {
+   "actor": "Aqueduct_Parapet_N",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_040x2200x070"
+  },
+  {
+   "actor": "Stair_Step7",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x300x1100"
+  },
+  {
+   "actor": "Colonnade_Pillar_5",
+   "component": "StaticMeshComponent0",
+   "key": "Col_160x160x450"
+  },
+  {
+   "actor": "Stair_Step1",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x300x380"
+  },
+  {
+   "actor": "Aqueduct_Pillar_3",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_250x250x950"
+  },
+  {
+   "actor": "Inspect_Overlook",
+   "component": "Mesh",
+   "key": "Blk_080x140x140"
+  },
+  {
+   "actor": "Colonnade_Pillar_1",
+   "component": "StaticMeshComponent0",
+   "key": "Col_160x160x300"
+  },
+  {
+   "actor": "Colonnade_Pillar_0",
+   "component": "StaticMeshComponent0",
+   "key": "Col_160x160x900"
+  },
+  {
+   "actor": "Aqueduct_Pillar_0",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_250x250x950"
+  },
+  {
+   "actor": "Log_1",
+   "component": "Mesh",
+   "key": "Col_070x070x500_W"
+  },
+  {
+   "actor": "Colonnade_Pillar_2",
+   "component": "StaticMeshComponent0",
+   "key": "Col_160x160x650"
+  },
+  {
+   "actor": "Block_RouteB",
+   "component": "Mesh",
+   "key": "Blk_150x150x120"
+  },
+  {
+   "actor": "Aqueduct_Parapet_S",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_040x1000x070"
+  },
+  {
+   "actor": "Colonnade_Pillar_3",
+   "component": "StaticMeshComponent0",
+   "key": "Col_160x160x200"
+  },
+  {
+   "actor": "Collapsible_Hut",
+   "component": "Hut_Post_0",
+   "key": "Blk_030x030x300_W"
+  },
+  {
+   "actor": "Collapsible_Hut",
+   "component": "Hut_Post_1",
+   "key": "Blk_030x030x300_W"
+  },
+  {
+   "actor": "Collapsible_Hut",
+   "component": "Hut_Post_2",
+   "key": "Blk_030x030x300_W"
+  },
+  {
+   "actor": "Collapsible_Hut",
+   "component": "Hut_Post_3",
+   "key": "Blk_030x030x300_W"
+  },
+  {
+   "actor": "Collapsible_Hut",
+   "component": "Hut_Roof",
+   "key": "Blk_600x600x015_W"
+  },
+  {
+   "actor": "Collapsible_Hut",
+   "component": "Hut_Wall_E",
+   "key": "Blk_500x020x200_W"
+  },
+  {
+   "actor": "Collapsible_Hut",
+   "component": "Hut_Wall_S",
+   "key": "Blk_020x500x240_W"
+  },
+  {
+   "actor": "Log_2",
+   "component": "Mesh",
+   "key": "Col_070x070x500_W"
+  },
+  {
+   "actor": "Log_0",
+   "component": "Mesh",
+   "key": "Col_070x070x500_W"
+  },
+  {
+   "actor": "Stair_Step6",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x300x980"
+  },
+  {
+   "actor": "Shrine_Dais",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_600x600x060"
+  },
+  {
+   "actor": "Stair_Step2",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x300x500"
+  },
+  {
+   "actor": "Inspect_ShrineStele",
+   "component": "Mesh",
+   "key": "Blk_050x160x240"
+  },
+  {
+   "actor": "Aqueduct_Pillar_2",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_250x250x950"
+  },
+  {
+   "actor": "Colonnade_Pillar_4",
+   "component": "StaticMeshComponent0",
+   "key": "Col_160x160x750"
+  },
+  {
+   "actor": "Colonnade_Lintel",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_500x120x100"
+  },
+  {
+   "actor": "Stair_Step3",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x300x620"
+  },
+  {
+   "actor": "Colonnade_FallenDrum",
+   "component": "StaticMeshComponent0",
+   "key": "Col_160x160x300"
+  },
+  {
+   "actor": "Stair_Step5",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x300x860"
+  },
+  {
+   "actor": "Stair_Step0_High",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x400x260"
+  },
+  {
+   "actor": "Aqueduct_Pillar_1",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_250x250x950"
+  },
+  {
+   "actor": "Stair_Step4",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x300x740"
+  },
+  {
+   "actor": "Aqueduct_Deck",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_400x3800x150"
+  },
+  {
+   "actor": "Aqueduct_BrokenChunk",
+   "component": "StaticMeshComponent0",
+   "key": "Blk_300x250x160"
+  }
+ ]
+}
