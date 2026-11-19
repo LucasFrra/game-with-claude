@@ -101,7 +101,7 @@ def build_toon():
     else:
         mat = L.TOOLS.create_asset("M_PP_EldoriaToon", PP_DIR, unreal.Material, unreal.MaterialFactoryNew())
     mat.set_editor_property("material_domain", unreal.MaterialDomain.MD_POST_PROCESS)
-    loc = set_enum(mat, "blendable_location", ["BL_SCENE_COLOR_BEFORE_BLOOM", "BL_SCENE_COLOR_AFTER_DOF", "BL_BEFORE_TONEMAPPING"])
+    loc = set_enum(mat, "blendable_location", ["BL_SCENE_COLOR_BEFORE_DOF", "BL_SCENE_COLOR_BEFORE_BLOOM"])   # before DOF: opaque only, translucency (water, VFX) composited after
 
     custom = L.expr(mat, unreal.MaterialExpressionCustom, -300, 0)
     custom.set_editor_property("code", TOON_HLSL)

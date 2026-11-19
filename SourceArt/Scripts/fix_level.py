@@ -20,7 +20,7 @@ def move(a, x, y, z):
 
 water = actors.get("Pool_Water")
 if water:
-    move(water, 3300, 200, -25)
+    move(water, 3300, 200, -10)
     water.set_actor_scale3d(unreal.Vector(12.5, 12.5, 0.06))
 for k in range(9):
     a = actors.get("Pool_RimStone_%d" % k)
