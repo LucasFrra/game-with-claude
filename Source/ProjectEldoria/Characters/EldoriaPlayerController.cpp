@@ -10,6 +10,8 @@
 #include "UI/EldoriaHUDWidget.h"
 #include "GameFramework/Pawn.h"
 #include "Components/EldoriaAbilityComponent.h"
+#include "Components/EldoriaVitalsComponent.h"
+#include "Characters/EldoriaCharacter.h"
 #include "ProjectEldoria.h"
 
 AEldoriaPlayerController::AEldoriaPlayerController()
@@ -60,6 +62,13 @@ void AEldoriaPlayerController::BindToPawn(APawn* InPawn)
 	{
 		Interaction->OnFocusChanged.AddUniqueDynamic(this, &AEldoriaPlayerController::HandleInteractionFocusChanged);
 		BoundInteraction = Interaction;
+	}
+	if (UEldoriaVitalsComponent* Vitals = InPawn ? InPawn->FindComponentByClass<UEldoriaVitalsComponent>() : nullptr)
+	{
+		Vitals->OnHealthChanged.AddUniqueDynamic(this, &AEldoriaPlayerController::HandleHealthChanged);
+		Vitals->OnStaminaChanged.AddUniqueDynamic(this, &AEldoriaPlayerController::HandleStaminaChanged);
+		HandleHealthChanged(Vitals->GetHealthQuarters(), Vitals->GetMaxQuarters());
+		HandleStaminaChanged(Vitals->GetStamina(), Vitals->IsExhausted());
 	}
 }
 
@@ -138,6 +147,38 @@ void AEldoriaPlayerController::EldoriaHeavyStun()
 #endif
 }
 
+void AEldoriaPlayerController::EldoriaDamage(int32 Quarters)
+{
+#if !UE_BUILD_SHIPPING
+	if (UEldoriaVitalsComponent* Vitals = GetPawn() ? GetPawn()->FindComponentByClass<UEldoriaVitalsComponent>() : nullptr)
+	{
+		Vitals->ApplyDamage(Quarters, nullptr);
+	}
+#endif
+}
+
+void AEldoriaPlayerController::EldoriaHoldMove(float X, float Y, float Seconds)
+{
+#if !UE_BUILD_SHIPPING
+	if (AEldoriaCharacter* Hero = Cast<AEldoriaCharacter>(GetPawn()))
+	{
+		Hero->HoldTestInput(FVector2D(X, Y), Seconds);
+	}
+#endif
+}
+
+void AEldoriaPlayerController::EldoriaJump()
+{
+#if !UE_BUILD_SHIPPING
+	if (AEldoriaCharacter* Hero = Cast<AEldoriaCharacter>(GetPawn()))
+	{
+		static_cast<AProjectEldoriaCharacter*>(Hero)->DoJumpStart();	// public in the base class
+		FTimerHandle Release;
+		GetWorldTimerManager().SetTimer(Release, FTimerDelegate::CreateWeakLambda(Hero, [Hero]() { Hero->DoJumpEnd(); }), 0.2f, false);
+	}
+#endif
+}
+
 void AEldoriaPlayerController::EldoriaTeleport(float X, float Y, float Z, float Yaw)
 {
 #if !UE_BUILD_SHIPPING
@@ -147,6 +188,22 @@ void AEldoriaPlayerController::EldoriaTeleport(float X, float Y, float Z, float 
 		SetControlRotation(FRotator(-10.f, Yaw, 0.f));
 	}
 #endif
+}
+
+void AEldoriaPlayerController::HandleHealthChanged(int32 Quarters, int32 MaxQuarters)
+{
+	if (HUDWidget)
+	{
+		HUDWidget->SetHealth(Quarters, MaxQuarters);
+	}
+}
+
+void AEldoriaPlayerController::HandleStaminaChanged(float Stamina, bool bExhausted)
+{
+	if (HUDWidget)
+	{
+		HUDWidget->SetStamina(Stamina, bExhausted);
+	}
 }
 
 void AEldoriaPlayerController::HandleInteractionFocusChanged(UObject* FocusedTarget, const FText& Prompt)

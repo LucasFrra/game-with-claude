@@ -2,6 +2,7 @@
 
 #include "Bosses/EldoriaDeityBase.h"
 #include "Environment/EldoriaCollapsibleStructure.h"
+#include "Components/EldoriaVitalsComponent.h"
 #include "Physics/EldoriaPhysicsObject.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -482,6 +483,10 @@ void AEldoriaDeityBase::UpdateCharge(float DeltaSeconds)
 			const float Side = FVector::DotProduct(Character->GetActorLocation() - GetActorLocation(), Right) >= 0.f ? 1.f : -1.f;
 			const FVector Push = (Right * Side * 0.85f + ChargeDirection * 0.5f).GetSafeNormal2D() * PlayerKnockbackSpeed + FVector(0.f, 0.f, 900.f);
 			Character->LaunchCharacter(Push, true, true);
+			if (UEldoriaVitalsComponent* Vitals = Character->FindComponentByClass<UEldoriaVitalsComponent>())
+			{
+				Vitals->ApplyDamage(ChargeDamageQuarters, this);
+			}
 			continue;
 		}
 

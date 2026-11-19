@@ -10,6 +10,9 @@
 #include "Components/Border.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
+#include "Components/Image.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Engine/Texture2D.h"
 #include "Brushes/SlateRoundedBoxBrush.h"
 #include "Styling/CoreStyle.h"
 #include "Engine/Font.h"
@@ -150,6 +153,34 @@ void UEldoriaHUDWidget::BuildDefaultLayout()
 	BossBar->SetVisibility(ESlateVisibility::Collapsed);
 	Place(BossBar, 0.06f, 56.f, FVector2D(460.f, 8.f));
 
+	// --- Hearts, top left
+	HeartsBox = WidgetTree->ConstructWidget<UHorizontalBox>(UHorizontalBox::StaticClass(), TEXT("HeartsBox"));
+	UCanvasPanelSlot* HeartsSlot = Root->AddChildToCanvas(HeartsBox);
+	HeartsSlot->SetAnchors(FAnchors(0.f, 0.f));
+	HeartsSlot->SetAlignment(FVector2D(0.f, 0.f));
+	HeartsSlot->SetPosition(FVector2D(42.f, 34.f));
+	HeartsSlot->SetAutoSize(true);
+	for (int32 Q = 0; Q <= 4; ++Q)
+	{
+		const FString Path = FString::Printf(TEXT("/Game/Project/UI/Textures/T_UI_Heart_%d.T_UI_Heart_%d"), Q, Q);
+		HeartTextures.Add(LoadObject<UTexture2D>(nullptr, *Path));
+	}
+
+	// --- Stamina ring, beside the character
+	StaminaRing = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass(), TEXT("StaminaRing"));
+	if (UMaterialInterface* RingMat = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Project/UI/Materials/M_UI_StaminaRing.M_UI_StaminaRing")))
+	{
+		StaminaMID = UMaterialInstanceDynamic::Create(RingMat, this);
+		StaminaRing->SetBrushFromMaterial(StaminaMID);
+	}
+	StaminaRing->SetRenderOpacity(0.f);
+	StaminaRing->SetVisibility(ESlateVisibility::HitTestInvisible);
+	UCanvasPanelSlot* RingSlot = Root->AddChildToCanvas(StaminaRing);
+	RingSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+	RingSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+	RingSlot->SetPosition(FVector2D(120.f, -70.f));
+	RingSlot->SetSize(FVector2D(72.f, 72.f));
+
 	// --- Banner: big golden capitals
 	BannerTitle = MakeText(TEXT("BannerTitle"), BannerFont, Gold);
 	BannerTitle->SetVisibility(ESlateVisibility::Collapsed);
@@ -182,6 +213,69 @@ void UEldoriaHUDWidget::HideBanner()
 {
 	if (BannerTitle) { BannerTitle->SetVisibility(ESlateVisibility::Collapsed); }
 	if (BannerSubtitle) { BannerSubtitle->SetVisibility(ESlateVisibility::Collapsed); }
+}
+
+void UEldoriaHUDWidget::SetHealth(int32 Quarters, int32 MaxQuarters)
+{
+	if (!HeartsBox)
+	{
+		return;
+	}
+	const int32 Hearts = FMath::Max(1, (MaxQuarters + 3) / 4);
+	while (HeartImages.Num() < Hearts)
+	{
+		UImage* Heart = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass());
+		Heart->SetDesiredSizeOverride(FVector2D(40.f, 40.f));
+		UHorizontalBoxSlot* HeartSlot = HeartsBox->AddChildToHorizontalBox(Heart);
+		HeartSlot->SetPadding(FMargin(0.f, 0.f, 5.f, 0.f));
+		HeartImages.Add(Heart);
+	}
+	for (int32 Index = 0; Index < HeartImages.Num(); ++Index)
+	{
+		const int32 Fill = FMath::Clamp(Quarters - Index * 4, 0, 4);
+		if (HeartTextures.IsValidIndex(Fill) && HeartTextures[Fill])
+		{
+			HeartImages[Index]->SetBrushFromTexture(HeartTextures[Fill]);
+			HeartImages[Index]->SetDesiredSizeOverride(FVector2D(40.f, 40.f));
+		}
+		HeartImages[Index]->SetVisibility(Index < Hearts ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	}
+	if (LastQuarters >= 0 && Quarters < LastQuarters)
+	{
+		DamageFlash = 1.f;
+	}
+	LastQuarters = Quarters;
+}
+
+void UEldoriaHUDWidget::SetStamina(float Stamina, bool bExhausted)
+{
+	StaminaValue = Stamina;
+	StaminaFullFor = Stamina >= 1.f ? StaminaFullFor : 0.f;
+	if (StaminaMID)
+	{
+		StaminaMID->SetScalarParameterValue(TEXT("Percent"), Stamina);
+		StaminaMID->SetVectorParameterValue(TEXT("Fill"), bExhausted ? FLinearColor(0.92f, 0.22f, 0.16f) : FLinearColor(0.42f, 0.86f, 0.36f));
+	}
+}
+
+void UEldoriaHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	// the ring lingers a moment once full, then fades away
+	StaminaFullFor = StaminaValue >= 1.f ? StaminaFullFor + InDeltaTime : 0.f;
+	const float Target = StaminaFullFor < 0.8f ? 1.f : 0.f;
+	StaminaOpacity = FMath::FInterpTo(StaminaOpacity, Target, InDeltaTime, Target > 0.f ? 12.f : 3.f);
+	if (StaminaRing)
+	{
+		StaminaRing->SetRenderOpacity(StaminaOpacity);
+	}
+	// hearts pulse briefly when hurt
+	if (HeartsBox)
+	{
+		DamageFlash = FMath::Max(0.f, DamageFlash - InDeltaTime * 2.5f);
+		const float Scale = 1.f + 0.18f * DamageFlash;
+		HeartsBox->SetRenderScale(FVector2D(Scale, Scale));
+	}
 }
 
 void UEldoriaHUDWidget::NativeConstruct()
