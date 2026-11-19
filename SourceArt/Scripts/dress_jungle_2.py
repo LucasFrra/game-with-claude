@@ -1,6 +1,7 @@
 # Project Eldoria - jungle visual pass 2: terrain refresh, lighting, vegetation, rocks, real props.
 import json
 import os
+import random
 import sys
 import importlib
 
@@ -110,15 +111,35 @@ def vegetation_collision():
     return n
 
 
+# BOTW-like replacements (blender_botw_assets.py + botw_vegetation.py): Quaternius name -> (asset, scale factor, copies)
+STYLIZED = {
+    "CommonTree_1": ("SM_Tree_Broadleaf_A", 1.0 / 3.7, 1), "CommonTree_2": ("SM_Tree_Broadleaf_B", 1.5 / 3.7, 1),
+    "CommonTree_3": ("SM_Tree_Broadleaf_A", 0.9 / 3.7, 1), "CommonTree_4": ("SM_Tree_Broadleaf_B", 1.4 / 3.7, 1),
+    "CommonTree_5": ("SM_Tree_Broadleaf_A", 1.1 / 3.7, 1),
+    "Plant_7_Big": ("SM_Bush_Round_A", 0.55, 1),
+    "Grass_Common_Short": ("SM_Grass_Clump_A", 2.6, 3), "Grass_Wispy_Short": ("SM_Grass_Clump_A", 2.4, 3),
+    "Grass_Common_Tall": ("SM_Grass_Clump_B", 2.0, 2), "Grass_Wispy_Tall": ("SM_Grass_Clump_B", 1.9, 2),
+}
+
+
+def veg_mesh(name):
+    if name in STYLIZED:
+        mesh = L.find_asset("/Game/Project/Environment/Stylized", STYLIZED[name][0], unreal.StaticMesh)
+        if mesh:
+            return mesh, STYLIZED[name][1], STYLIZED[name][2]
+    return L.nature_mesh(name), 1.0, 1
+
+
 def foliage_type(name):
     L.ensure_dir("/Game/Project/Environment/Foliage")
     path = "/Game/Project/Environment/Foliage/FT_" + name
     ft = unreal.load_asset(path) if L.EAL.does_asset_exist(path) else None
     if ft is None:
         ft = L.TOOLS.create_asset("FT_" + name, "/Game/Project/Environment/Foliage", unreal.FoliageType_InstancedStaticMesh, unreal.FoliageType_InstancedStaticMeshFactory())
-    ft.set_editor_property("mesh", L.nature_mesh(name))
+    ft.set_editor_property("mesh", veg_mesh(name)[0])
     small = not name.startswith("CommonTree")
-    ft.set_editor_property("cull_distance", unreal.Int32Interval(min=0, max=9000 if small else 0))
+    grass = name.startswith("Grass")
+    ft.set_editor_property("cull_distance", unreal.Int32Interval(min=0, max=4500 if grass else 9000 if small else 0))
     ft.set_editor_property("cast_shadow", not name.startswith(("Grass", "Clover", "Pebble")))
     L.EAL.save_loaded_asset(ft)
     return ft
@@ -130,9 +151,17 @@ def foliage(data):
     for name, items in data["foliage"].items():
         ft = foliage_type(name)
         unreal.InstancedFoliageActor.remove_all_instances(world, ft)
-        transforms = [unreal.Transform(unreal.Vector(i["x"] * 100, i["y"] * 100, i["z"] * 100),
-                                       unreal.Rotator(pitch=0.0, yaw=i["yaw"], roll=0.0),
-                                       unreal.Vector(i["scale"], i["scale"], i["scale"])) for i in items]
+        _, factor, copies = veg_mesh(name)
+        rng = random.Random(name)
+        transforms = []
+        for i in items:
+            for c in range(copies):
+                # extra copies are jittered around the original: a denser, continuous carpet
+                dx, dy = (rng.uniform(-0.7, 0.7), rng.uniform(-0.7, 0.7)) if c else (0.0, 0.0)
+                sc = i["scale"] * factor * (rng.uniform(0.8, 1.15) if c else 1.0)
+                transforms.append(unreal.Transform(unreal.Vector((i["x"] + dx) * 100, (i["y"] + dy) * 100, i["z"] * 100 - 3),
+                                                   unreal.Rotator(pitch=0.0, yaw=rng.uniform(0, 360) if c else i["yaw"], roll=0.0),
+                                                   unreal.Vector(sc, sc, sc)))
         unreal.InstancedFoliageActor.add_instances(world, ft, transforms)
         total += len(transforms)
     return total
@@ -143,9 +172,12 @@ def hero_trees(data):
     L.destroy(["GiantTree_", "HeroTree_", "TrunkCollider_"])
     cyl = unreal.load_asset("/Engine/BasicShapes/Cylinder")
     for k, t in enumerate(data["trees_hero"]):
-        mesh = L.nature_mesh(t["mesh"])
-        L.spawn_mesh(mesh, "HeroTree_%02d" % k, (t["x"] * 100, t["y"] * 100, t["z"] * 100), t["yaw"], t["scale"], "Jungle/Trees/Hero", collision=False)
+        mesh, factor, _ = veg_mesh(t["mesh"])
+        L.spawn_mesh(mesh, "HeroTree_%02d" % k, (t["x"] * 100, t["y"] * 100, t["z"] * 100), t["yaw"], t["scale"] * factor * 1.15, "Jungle/Trees/Hero", collision=False)
         r, h = t["collider"]["radius"], t["collider"]["height"]
+        trunk = {"SM_Tree_Broadleaf_A": 0.95, "SM_Tree_Broadleaf_B": 0.55}.get(mesh.get_name())
+        if trunk:   # match the stylized trunk (radius at chest height, mesh units are metres)
+            r, h = trunk * t["scale"] * factor * 1.15 * 1.05, 16.0 * t["scale"] * factor * 1.15 * 0.5
         col = L.spawn_mesh(cyl, "TrunkCollider_%02d" % k, (t["x"] * 100, t["y"] * 100, (t["z"] + h / 2) * 100), 0.0, (r * 2, r * 2, h), "Jungle/Trees/Hero")
         col.set_actor_hidden_in_game(True)
         col.static_mesh_component.set_visibility(False)
@@ -239,6 +271,9 @@ def run():
     pool()
     young_trees()
     props()
+    # stylized young trees + rocks (J1b): runs its own pass and saves
+    import stylize_props
+    importlib.reload(stylize_props)
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).save_current_level()
     L.EAL.save_directory("/Game/Project", only_if_is_dirty=True, recursive=True)
     log.append("saved")

@@ -14,6 +14,17 @@ leurs ruines de pierre claire, et une technologie de laiton et de lumière turqu
 | Couleurs | Saturation retenue (1.04), contraste doux (0.94), hautes lumières chaudes, ombres froides | `PostProcessVolume` |
 | Peu de texture | Aplats et dégradés plutôt que du bruit ; détails rares mais choisis | matériaux maîtres |
 
+## 1b. Ce qui fait vraiment l'image (leçons du J1b)
+Le filtre d'ombrage seul ne suffit pas. L'essentiel vient de :
+- **Ciel et lointain** : nuages bas et épais (couche 1,5–4,5 km), ciel bleu non voilé (brouillard coupé à 5 km),
+  sommets enneigés à 2–3,5 km qui dépassent des falaises (`SM_Peak_*`, `M_Eldoria_Distant`).
+- **Herbe** : touffes de brins fins (`SM_Grass_Clump_A/B`) dont **toutes les normales pointent vers le haut** → éclairées comme le sol,
+  couleur de racine = couleur du sol, pointes jaunies ; ~3× plus dense, disparaît après 45 m.
+- **Arbres** : couronnes rondes (cœur opaque + cartes de feuilles `T_LeafCluster`) aux **normales sphériques** depuis le centre de la couronne ;
+  c'est ce qui donne la séparation lumière/ombre douce des arbres de BOTW. Généré par `blender_botw_assets.py` (Blender sans interface).
+- **Rendu léger** : pas de Lumen ni de ray tracing (inutile pour ce style et trop lourd pour 4 Go de VRAM) ; ombres classiques, AO écran, TAA.
+- Toujours juger le rendu en qualité **Epic** (`scalability 3`), jamais sur une capture en qualité réduite.
+
 ## 2. Palette (couleurs de base, linéaire)
 | Élément | Clair | Sombre |
 |---------|-------|--------|

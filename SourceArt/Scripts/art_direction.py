@@ -157,6 +157,16 @@ def world(mi):
             c.set_editor_property("directional_inscattering_exponent", 6.0)
             c.set_editor_property("start_distance", 1500.0)
             c.set_editor_property("fog_max_opacity", 0.85)
+            c.set_editor_property("fog_cutoff_distance", 500000.0)   # the sky itself stays clear and blue
+        elif lbl == "VolumetricCloud":
+            # BOTW cumulus: a low, thick layer so the clouds read as big white shapes
+            c = a.get_component_by_class(unreal.VolumetricCloudComponent)
+            c.set_editor_property("layer_bottom_altitude", 1.5)
+            c.set_editor_property("layer_height", 3.0)
+        elif lbl == "SkyAtmosphere":
+            c = a.get_component_by_class(unreal.SkyAtmosphereComponent)
+            c.set_editor_property("rayleigh_scattering_scale", 0.045)
+            c.set_editor_property("mie_scattering_scale", 0.002)
         elif lbl == "PostProcessVolume":
             a.set_editor_property("unbound", True)
             s = a.get_editor_property("settings")
